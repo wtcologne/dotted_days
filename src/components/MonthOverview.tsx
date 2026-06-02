@@ -54,29 +54,29 @@ export function MonthOverview({
 
   return (
     <main className="mx-auto min-h-svh w-full max-w-md px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))]">
-      <header className="sticky top-0 z-10 -mx-4 bg-cream/90 px-4 pb-4 pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))] backdrop-blur">
-        <h1 className="text-[2.7rem] font-semibold leading-none tracking-[-0.08em] text-ink">
-          Dotted Days
-        </h1>
-        <p className="mt-2 text-sm font-semibold uppercase tracking-[0.2em] text-muted">
-          Übersicht
-        </p>
-        <p className="mt-2 max-w-64 text-sm leading-5 text-muted">
-          Plane die nächsten {DEFAULT_MONTHS_FORWARD} Monate und behalte deinen aktuellen Fokus
-          im Blick.
-        </p>
+      <header className="sticky top-0 z-20 -mx-4 space-y-3 bg-cream/95 px-4 pb-4 pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))] shadow-[0_18px_34px_rgba(72,55,40,0.05)] backdrop-blur-xl">
+        <div>
+          <h1 className="text-[2.7rem] font-semibold leading-none tracking-[-0.08em] text-ink">
+            Dotted Days
+          </h1>
+          <p className="mt-2 text-sm font-semibold uppercase tracking-[0.2em] text-muted">
+            Übersicht
+          </p>
+          <p className="mt-2 max-w-64 text-sm leading-5 text-muted">
+            Plane die nächsten {DEFAULT_MONTHS_FORWARD} Monate und behalte deinen aktuellen Fokus
+            im Blick.
+          </p>
+        </div>
+
+        <AccountMenu auth={auth} theme={theme} />
       </header>
 
-      <div className="mb-3">
-        <AccountMenu auth={auth} theme={theme} />
-      </div>
-
-      <section className="space-y-3 pb-4" aria-label="Monatsliste">
+      <section className="space-y-3 pb-4 pt-3" aria-label="Monatsliste">
         {items.map((item) => (
           <div
             key={item.challenge.month}
             ref={item.challenge.month === scrollTargetMonth ? scrollTargetRef : null}
-            className="scroll-mt-28"
+            className="scroll-mt-72"
           >
             <MonthListItem item={item} onSelectMonth={onSelectMonth} />
           </div>
