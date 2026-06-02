@@ -8,9 +8,9 @@ import {
   getTodayDay,
   normalizeDoneDays,
 } from "./date";
-import { createChallengeRepository } from "./repository";
 import { calculateCurrentStreak } from "./streak";
-import type { Challenge } from "./types";
+import { createChallengeRepository } from "./repository";
+import type { Challenge, ChallengeRepository } from "./types";
 
 type CurrentChallengeState = {
   challenge: Challenge | null;
@@ -28,13 +28,16 @@ type CurrentChallengeState = {
   resetMonth(): Promise<void>;
 };
 
-const repository = createChallengeRepository();
+const defaultRepository = createChallengeRepository();
 
 export function useCurrentChallenge(): CurrentChallengeState {
-  return useChallengeMonth(getCurrentMonthKey());
+  return useChallengeMonth(getCurrentMonthKey(), defaultRepository);
 }
 
-export function useChallengeMonth(monthKey: string): CurrentChallengeState {
+export function useChallengeMonth(
+  monthKey: string,
+  repository: ChallengeRepository,
+): CurrentChallengeState {
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,12 +59,12 @@ export function useChallengeMonth(monthKey: string): CurrentChallengeState {
     return () => {
       isMounted = false;
     };
-  }, [monthKey]);
+  }, [monthKey, repository]);
 
   const saveAndSetChallenge = useCallback((nextChallenge: Challenge) => {
     setChallenge(nextChallenge);
     void repository.saveChallenge(nextChallenge);
-  }, []);
+  }, [repository]);
 
   const updateTitle = useCallback(
     (title: string) => {
@@ -118,7 +121,7 @@ export function useChallengeMonth(monthKey: string): CurrentChallengeState {
   const resetMonth = useCallback(async () => {
     const resetChallenge = await repository.resetChallengeByMonth(monthKey);
     setChallenge(resetChallenge);
-  }, [monthKey]);
+  }, [monthKey, repository]);
 
   return useMemo(() => {
     const daysInMonth = challenge ? getDaysInMonth(challenge.month) : 30;

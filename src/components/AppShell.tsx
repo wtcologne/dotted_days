@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChallengeSuggestions } from "@/components/ChallengeSuggestions";
 import { ChallengeTitle } from "@/components/ChallengeTitle";
 import { MonthOverview } from "@/components/MonthOverview";
@@ -8,14 +8,26 @@ import { MonthCalendar } from "@/components/MonthCalendar";
 import { StatsCards } from "@/components/StatsCards";
 import { TodayButton } from "@/components/TodayButton";
 import { getCurrentMonthKey, getMonthLabel } from "@/lib/challenge/date";
+import { createChallengeRepository } from "@/lib/challenge/repository";
+import { SupabaseChallengeRepository } from "@/lib/challenge/supabase-repository";
+import type { ChallengeRepository } from "@/lib/challenge/types";
 import { useChallengeOverview } from "@/lib/challenge/use-challenge-overview";
 import { useChallengeMonth } from "@/lib/challenge/use-current-challenge";
+import { useSupabaseAuth } from "@/lib/supabase/use-supabase-auth";
 
 export function AppShell() {
   const [view, setView] = useState<"overview" | "detail">("overview");
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthKey);
   const [scrollTargetMonth, setScrollTargetMonth] = useState<string | null>(null);
-  const overview = useChallengeOverview();
+  const auth = useSupabaseAuth();
+  const repository = useMemo<ChallengeRepository>(() => {
+    if (auth.supabase && auth.user) {
+      return new SupabaseChallengeRepository(auth.supabase, auth.user.id);
+    }
+
+    return createChallengeRepository();
+  }, [auth.supabase, auth.user]);
+  const overview = useChallengeOverview(repository);
 
   const handleSelectMonth = (month: string) => {
     setSelectedMonth(month);
@@ -35,20 +47,28 @@ export function AppShell() {
         items={overview.items}
         isLoading={overview.isLoading}
         scrollTargetMonth={scrollTargetMonth}
+        auth={auth}
         onSelectMonth={handleSelectMonth}
       />
     );
   }
 
-  return <ChallengeDetail month={selectedMonth} onBack={handleBackToOverview} />;
+  return (
+    <ChallengeDetail
+      month={selectedMonth}
+      repository={repository}
+      onBack={handleBackToOverview}
+    />
+  );
 }
 
 type ChallengeDetailProps = {
   month: string;
+  repository: ChallengeRepository;
   onBack(): void;
 };
 
-function ChallengeDetail({ month, onBack }: ChallengeDetailProps) {
+function ChallengeDetail({ month, repository, onBack }: ChallengeDetailProps) {
   const {
     challenge,
     daysInMonth,
@@ -63,7 +83,7 @@ function ChallengeDetail({ month, onBack }: ChallengeDetailProps) {
     toggleDay,
     resetMonth,
     status,
-  } = useChallengeMonth(month);
+  } = useChallengeMonth(month, repository);
 
   const handleResetClick = () => {
     const shouldReset = window.confirm("Diesen Monat wirklich zurücksetzen?");

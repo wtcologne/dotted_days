@@ -33,9 +33,46 @@ No account, database or environment variables are required for the local V1 prot
 
 ## Supabase Later
 
-Next steps for the Supabase version:
+Supabase support is wired in, but the app still works as a guest app when env vars are missing.
 
-- Install and configure the Supabase client
-- Review `supabase-schema.sql`
-- Add auth and RLS policies
-- Replace the local repository with a Supabase-backed repository
+Required local env file:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Setup steps:
+
+1. Create a Supabase project.
+2. Run `supabase-schema.sql` in the Supabase SQL editor.
+3. Enable Email OTP / Magic Link auth.
+4. Add redirect URLs:
+   - `http://localhost:3000`
+   - your Vercel production URL
+   - your Vercel preview URL pattern if needed
+5. Add the same env vars in Vercel.
+
+When signed in, challenges are stored in Supabase. Without a session, the app keeps using local browser storage.
+
+## Deployment
+
+GitHub repository:
+
+```text
+https://github.com/wtcologne/dotted_days
+```
+
+Vercel CLI check:
+
+```bash
+npx vercel whoami
+```
+
+If not authenticated:
+
+```bash
+npx vercel login
+```
+
+Then connect the GitHub repository in Vercel and deploy with the default Next.js settings.

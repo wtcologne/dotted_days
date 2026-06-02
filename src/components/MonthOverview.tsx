@@ -3,12 +3,15 @@
 import { useEffect, useRef } from "react";
 import { DEFAULT_MONTHS_FORWARD } from "@/lib/challenge/date";
 import type { ChallengeOverviewItem } from "@/lib/challenge/use-challenge-overview";
+import type { SupabaseAuthState } from "@/lib/supabase/use-supabase-auth";
+import { AccountMenu } from "./AccountMenu";
 import { MonthListItem } from "./MonthListItem";
 
 type MonthOverviewProps = {
   items: ChallengeOverviewItem[];
   isLoading: boolean;
   scrollTargetMonth: string | null;
+  auth: SupabaseAuthState;
   onSelectMonth(month: string): void;
 };
 
@@ -16,6 +19,7 @@ export function MonthOverview({
   items,
   isLoading,
   scrollTargetMonth,
+  auth,
   onSelectMonth,
 }: MonthOverviewProps) {
   const scrollTargetRef = useRef<HTMLDivElement | null>(null);
@@ -55,6 +59,10 @@ export function MonthOverview({
           im Blick.
         </p>
       </header>
+
+      <div className="mb-3">
+        <AccountMenu auth={auth} />
+      </div>
 
       <section className="space-y-3 pb-4" aria-label="Monatsliste">
         {items.map((item) => (

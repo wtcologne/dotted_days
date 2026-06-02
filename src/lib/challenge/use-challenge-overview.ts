@@ -7,8 +7,7 @@ import {
   getMonthStatus,
   normalizeDoneDays,
 } from "./date";
-import { createChallengeRepository } from "./repository";
-import type { Challenge } from "./types";
+import type { Challenge, ChallengeRepository } from "./types";
 
 export type ChallengeOverviewItem = {
   challenge: Challenge;
@@ -24,24 +23,22 @@ type ChallengeOverviewState = {
   refresh(): Promise<void>;
 };
 
-const repository = createChallengeRepository();
-
-export function useChallengeOverview(): ChallengeOverviewState {
+export function useChallengeOverview(repository: ChallengeRepository): ChallengeOverviewState {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
-    const overviewChallenges = await loadOverviewChallenges();
+    const overviewChallenges = await loadOverviewChallenges(repository);
     setChallenges(overviewChallenges);
     setIsLoading(false);
-  }, []);
+  }, [repository]);
 
   useEffect(() => {
     let isMounted = true;
 
     async function load(): Promise<void> {
-      const overviewChallenges = await loadOverviewChallenges();
+      const overviewChallenges = await loadOverviewChallenges(repository);
 
       if (isMounted) {
         setChallenges(overviewChallenges);
@@ -54,7 +51,7 @@ export function useChallengeOverview(): ChallengeOverviewState {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [repository]);
 
   const items = useMemo(
     () =>
@@ -84,7 +81,7 @@ export function useChallengeOverview(): ChallengeOverviewState {
   };
 }
 
-async function loadOverviewChallenges(): Promise<Challenge[]> {
+async function loadOverviewChallenges(repository: ChallengeRepository): Promise<Challenge[]> {
   const storedChallenges = await repository.listChallenges();
   const monthKeys = Array.from(
     new Set([...getMonthRange(), ...storedChallenges.map((challenge) => challenge.month)]),
