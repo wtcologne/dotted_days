@@ -14,14 +14,23 @@ type AccountMenuProps = {
 export function AccountMenu({ auth, theme }: AccountMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [isCodeSent, setIsCodeSent] = useState(false);
 
   const handleToggleOpen = () => {
     setIsOpen((current) => !current);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSendCode = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setCode("");
     void auth.signInWithEmail(email);
+    setIsCodeSent(true);
+  };
+
+  const handleVerifyCode = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void auth.verifyEmailCode(email, code);
   };
 
   const handleSignOut = () => {
@@ -30,6 +39,12 @@ export function AccountMenu({ auth, theme }: AccountMenuProps) {
 
   const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
+    setCode("");
+    setIsCodeSent(false);
+  };
+
+  const handleCodeChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setCode(event.target.value.replace(/\D/g, "").slice(0, 6));
   };
 
   return (
@@ -64,26 +79,56 @@ export function AccountMenu({ auth, theme }: AccountMenuProps) {
               </button>
             </div>
           ) : (
-            <form className="space-y-3" onSubmit={handleSubmit}>
-              <label className="block">
-                <span className="sr-only">E-Mail</span>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={handleEmailChange}
-                  placeholder="deine@email.de"
-                  className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-base font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
-                />
-              </label>
-              <button
-                type="submit"
-                disabled={auth.isLoading}
-                className="min-h-12 w-full rounded-[1.15rem] bg-ink px-4 text-sm font-semibold text-paper transition active:scale-[0.99] disabled:bg-muted/40"
-              >
-                Login-Link senden
-              </button>
-            </form>
+            <div className="space-y-3">
+              <form className="space-y-3" onSubmit={handleSendCode}>
+                <label className="block">
+                  <span className="sr-only">E-Mail</span>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={handleEmailChange}
+                    placeholder="deine@email.de"
+                    autoComplete="email"
+                    className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-base font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  disabled={auth.isLoading}
+                  className="min-h-12 w-full rounded-[1.15rem] bg-ink px-4 text-sm font-semibold text-paper transition active:scale-[0.99] disabled:bg-muted/40"
+                >
+                  {isCodeSent ? "Code erneut senden" : "Code senden"}
+                </button>
+              </form>
+
+              {isCodeSent ? (
+                <form className="space-y-3" onSubmit={handleVerifyCode}>
+                  <label className="block">
+                    <span className="sr-only">Login-Code</span>
+                    <input
+                      type="text"
+                      required
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={6}
+                      autoComplete="one-time-code"
+                      value={code}
+                      onChange={handleCodeChange}
+                      placeholder="123456"
+                      className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-center text-xl font-semibold tracking-[0.18em] text-ink outline-none placeholder:text-muted/35 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
+                    />
+                  </label>
+                  <button
+                    type="submit"
+                    disabled={auth.isLoading || code.length < 6}
+                    className="min-h-12 w-full rounded-[1.15rem] bg-sageDeep px-4 text-sm font-semibold text-paper transition active:scale-[0.99] disabled:bg-muted/40"
+                  >
+                    Einloggen
+                  </button>
+                </form>
+              ) : null}
+            </div>
           )}
 
           {auth.message ? <p className="text-sm leading-5 text-muted">{auth.message}</p> : null}

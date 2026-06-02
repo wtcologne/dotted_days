@@ -12,6 +12,7 @@ export type SupabaseAuthState = {
   isLoading: boolean;
   message: string | null;
   signInWithEmail(email: string): Promise<void>;
+  verifyEmailCode(email: string, token: string): Promise<void>;
   signOut(): Promise<void>;
 };
 
@@ -62,11 +63,29 @@ export function useSupabaseAuth(): SupabaseAuthState {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: window.location.origin,
+          shouldCreateUser: true,
         },
       });
 
-      setMessage(error ? error.message : "Check deine E-Mail für den Login-Link.");
+      setMessage(error ? error.message : "Check deine E-Mail für den Login-Code.");
+    },
+    [supabase],
+  );
+
+  const verifyEmailCode = useCallback(
+    async (email: string, token: string) => {
+      if (!supabase) {
+        setMessage("Supabase ist noch nicht konfiguriert.");
+        return;
+      }
+
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: "email",
+      });
+
+      setMessage(error ? error.message : "Du bist eingeloggt.");
     },
     [supabase],
   );
@@ -88,6 +107,7 @@ export function useSupabaseAuth(): SupabaseAuthState {
     isLoading,
     message,
     signInWithEmail,
+    verifyEmailCode,
     signOut,
   };
 }
