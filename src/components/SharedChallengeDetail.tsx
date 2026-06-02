@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { getMonthLabel } from "@/lib/challenge/date";
 import type { SupabaseChallengeRepository } from "@/lib/challenge/supabase-repository";
 import { useSharedChallenge } from "@/lib/challenge/use-shared-challenge";
@@ -17,6 +18,7 @@ export function SharedChallengeDetail({
   repository,
   onBack,
 }: SharedChallengeDetailProps) {
+  const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const {
     challenge,
     daysInMonth,
@@ -28,13 +30,38 @@ export function SharedChallengeDetail({
     toggleToday,
     toggleDay,
   } = useSharedChallenge(challengeId, repository);
+  const inviteLink = useMemo(() => {
+    if (!challenge?.inviteCode || typeof window === "undefined") {
+      return "";
+    }
+
+    return `${window.location.origin}/join/${challenge.inviteCode}`;
+  }, [challenge?.inviteCode]);
 
   const handleCopyInvite = async () => {
-    if (!challenge) {
+    if (!inviteLink) {
       return;
     }
 
-    await window.navigator.clipboard.writeText(`${window.location.origin}/join/${challenge.inviteCode}`);
+    await window.navigator.clipboard.writeText(inviteLink);
+    setCopyMessage("Invite-Link kopiert.");
+  };
+
+  const handleShareInvite = async () => {
+    if (!inviteLink) {
+      return;
+    }
+
+    if (navigator.share) {
+      await navigator.share({
+        title: "Dotted Days Challenge",
+        text: `Mach bei "${challenge?.title}" mit.`,
+        url: inviteLink,
+      });
+      return;
+    }
+
+    await handleCopyInvite();
   };
 
   if (isLoading || !challenge) {
@@ -81,6 +108,46 @@ export function SharedChallengeDetail({
           <p className="mt-4 text-sm text-muted">
             Dein Fortschritt: {progress}/{daysInMonth} Tage
           </p>
+        </section>
+
+        <section className="rounded-[1.65rem] border border-white/70 bg-paper/70 p-4 shadow-[0_14px_36px_rgba(72,55,40,0.06)] backdrop-blur">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-ink">Invite-Link</p>
+              <p className="mt-0.5 text-xs text-muted">Kopieren und per WhatsApp verschicken</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleShareInvite}
+              className="min-h-10 rounded-full bg-ink px-4 text-sm font-semibold text-paper transition active:scale-95"
+            >
+              Teilen
+            </button>
+          </div>
+
+          {inviteLink ? (
+            <div className="mt-3 flex gap-2">
+              <input
+                readOnly
+                value={inviteLink}
+                className="min-h-12 min-w-0 flex-1 rounded-[1.15rem] border border-line/70 bg-input px-3 text-sm font-medium text-muted outline-none"
+                aria-label="Invite-Link"
+              />
+              <button
+                type="button"
+                onClick={handleCopyInvite}
+                className="min-h-12 rounded-[1.15rem] bg-sageDeep px-4 text-sm font-semibold text-white transition active:scale-95"
+              >
+                Kopieren
+              </button>
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-5 text-muted">
+              Für diese Challenge fehlt noch ein Invite-Code. Erstelle sie bitte neu.
+            </p>
+          )}
+
+          {copyMessage ? <p className="mt-2 text-sm text-muted">{copyMessage}</p> : null}
         </section>
 
         <TodayButton isDone={todayDone} onToggleToday={toggleToday} />
