@@ -6,6 +6,8 @@ import { ChallengeSuggestions } from "@/components/ChallengeSuggestions";
 import { ChallengeTitle } from "@/components/ChallengeTitle";
 import { MonthOverview } from "@/components/MonthOverview";
 import { MonthCalendar } from "@/components/MonthCalendar";
+import { SharedChallengeDetail } from "@/components/SharedChallengeDetail";
+import { SharedChallengesSection } from "@/components/SharedChallengesSection";
 import { StatsCards } from "@/components/StatsCards";
 import { TodayButton } from "@/components/TodayButton";
 import { getCurrentMonthKey, getMonthLabel } from "@/lib/challenge/date";
@@ -18,18 +20,23 @@ import { useSupabaseAuth } from "@/lib/supabase/use-supabase-auth";
 import { useTheme } from "@/lib/theme/use-theme";
 
 export function AppShell() {
-  const [view, setView] = useState<"overview" | "detail">("overview");
+  const [view, setView] = useState<"overview" | "detail" | "shared-detail">("overview");
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthKey);
+  const [selectedSharedChallengeId, setSelectedSharedChallengeId] = useState<string | null>(null);
   const [scrollTargetMonth, setScrollTargetMonth] = useState<string | null>(null);
   const auth = useSupabaseAuth();
   const theme = useTheme();
-  const repository = useMemo<ChallengeRepository>(() => {
+  const sharedRepository = useMemo(() => {
     if (auth.supabase && auth.user) {
       return new SupabaseChallengeRepository(auth.supabase, auth.user.id);
     }
 
-    return createChallengeRepository();
+    return null;
   }, [auth.supabase, auth.user]);
+  const repository = useMemo<ChallengeRepository>(
+    () => sharedRepository ?? createChallengeRepository(),
+    [sharedRepository],
+  );
   const overview = useChallengeOverview(repository);
 
   const handleSelectMonth = (month: string) => {
@@ -42,6 +49,15 @@ export function AppShell() {
     setScrollTargetMonth(selectedMonth);
     setView("overview");
     void overview.refresh();
+  };
+
+  const handleSelectSharedChallenge = (challengeId: string) => {
+    setSelectedSharedChallengeId(challengeId);
+    setView("shared-detail");
+  };
+
+  const handleBackToMonthDetail = () => {
+    setView("detail");
   };
 
   if (view === "overview") {
@@ -57,11 +73,23 @@ export function AppShell() {
     );
   }
 
+  if (view === "shared-detail" && sharedRepository && selectedSharedChallengeId) {
+    return (
+      <SharedChallengeDetail
+        challengeId={selectedSharedChallengeId}
+        repository={sharedRepository}
+        onBack={handleBackToMonthDetail}
+      />
+    );
+  }
+
   return (
     <ChallengeDetail
       month={selectedMonth}
       repository={repository}
+      sharedRepository={sharedRepository}
       onBack={handleBackToOverview}
+      onSelectSharedChallenge={handleSelectSharedChallenge}
     />
   );
 }
@@ -69,10 +97,18 @@ export function AppShell() {
 type ChallengeDetailProps = {
   month: string;
   repository: ChallengeRepository;
+  sharedRepository: SupabaseChallengeRepository | null;
   onBack(): void;
+  onSelectSharedChallenge(challengeId: string): void;
 };
 
-function ChallengeDetail({ month, repository, onBack }: ChallengeDetailProps) {
+function ChallengeDetail({
+  month,
+  repository,
+  sharedRepository,
+  onBack,
+  onSelectSharedChallenge,
+}: ChallengeDetailProps) {
   const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const {
     challenge,
@@ -198,6 +234,12 @@ function ChallengeDetail({ month, repository, onBack }: ChallengeDetailProps) {
             onToggleDay={toggleDay}
           />
         ) : null}
+
+        <SharedChallengesSection
+          month={challenge.month}
+          repository={sharedRepository}
+          onSelectChallenge={onSelectSharedChallenge}
+        />
       </div>
     </main>
   );

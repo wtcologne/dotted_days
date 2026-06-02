@@ -1,10 +1,42 @@
+export type ChallengeKind = "personal" | "shared";
+
 export type Challenge = {
   id: string;
   title: string;
   month: string;
+  kind: ChallengeKind;
   doneDays: number[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type SharedChallengeMember = {
+  userId: string;
+  role: "owner" | "member";
+};
+
+export type SharedChallengeSummary = {
+  id: string;
+  title: string;
+  month: string;
+  inviteCode: string;
+  doneDays: number[];
+  memberCount: number;
+  todayDoneCount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SharedChallengeDetail = SharedChallengeSummary & {
+  members: SharedChallengeMember[];
+};
+
+export type SharedChallengeRepository = {
+  listSharedChallenges(month: string): Promise<SharedChallengeSummary[]>;
+  getSharedChallenge(challengeId: string): Promise<SharedChallengeDetail>;
+  createSharedChallenge(month: string, title: string): Promise<SharedChallengeDetail>;
+  joinSharedChallenge(inviteCode: string): Promise<SharedChallengeDetail>;
+  saveSharedChallengeCheckIns(challengeId: string, month: string, doneDays: number[]): Promise<void>;
 };
 
 export type ChallengeRepository = {
