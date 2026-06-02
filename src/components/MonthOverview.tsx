@@ -53,7 +53,7 @@ export function MonthOverview({
   }
 
   return (
-    <main className="mx-auto min-h-svh w-full max-w-md px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))]">
+    <main className="mx-auto min-h-svh w-full max-w-md px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))]">
       <header className="sticky top-0 z-20 -mx-4 space-y-3 bg-cream/95 px-4 pb-4 pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))] shadow-[0_18px_34px_rgba(72,55,40,0.05)] backdrop-blur-xl">
         <div>
           <h1 className="text-[2.7rem] font-semibold leading-none tracking-[-0.08em] text-ink">
