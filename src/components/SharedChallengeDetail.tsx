@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import type { PointerEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { getMonthLabel } from "@/lib/challenge/date";
 import type { SupabaseChallengeRepository } from "@/lib/challenge/supabase-repository";
 import { useSharedChallenge } from "@/lib/challenge/use-shared-challenge";
@@ -18,6 +19,7 @@ export function SharedChallengeDetail({
   repository,
   onBack,
 }: SharedChallengeDetailProps) {
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const [removeMessage, setRemoveMessage] = useState<string | null>(null);
   const {
@@ -66,6 +68,38 @@ export function SharedChallengeDetail({
     await handleCopyInvite();
   };
 
+  const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType !== "touch" || event.clientX > 44) {
+      swipeStartRef.current = null;
+      return;
+    }
+
+    swipeStartRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+    };
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLElement>) => {
+    const start = swipeStartRef.current;
+    swipeStartRef.current = null;
+
+    if (!start) {
+      return;
+    }
+
+    const deltaX = event.clientX - start.x;
+    const deltaY = Math.abs(event.clientY - start.y);
+
+    if (deltaX > 86 && deltaY < 64) {
+      onBack();
+    }
+  };
+
+  const handlePointerCancel = () => {
+    swipeStartRef.current = null;
+  };
+
   const handleRemoveChallenge = async () => {
     if (!challenge) {
       return;
@@ -101,7 +135,12 @@ export function SharedChallengeDetail({
   }
 
   return (
-    <main className="mx-auto flex min-h-svh w-full max-w-md flex-col px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))]">
+    <main
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      className="mx-auto flex min-h-svh w-full max-w-md touch-pan-y flex-col px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))]"
+    >
       <div className="flex flex-1 flex-col gap-5">
         <header className="flex items-center justify-between pt-1">
           <button
@@ -117,13 +156,7 @@ export function SharedChallengeDetail({
             </p>
             <p className="mt-0.5 text-xs font-medium text-muted">Gemeinsam</p>
           </div>
-          <button
-            type="button"
-            onClick={handleCopyInvite}
-            className="min-h-11 rounded-full border border-line/80 bg-paper/65 px-4 text-sm font-semibold text-muted shadow-[0_10px_28px_rgba(72,55,40,0.06)] backdrop-blur transition active:scale-95"
-          >
-            Teilen
-          </button>
+          <div className="min-h-11 w-[4.25rem]" aria-hidden="true" />
         </header>
 
         <section className="rounded-[1.8rem] border border-white/70 bg-paper/70 p-5 shadow-[0_14px_36px_rgba(72,55,40,0.06)] backdrop-blur">
