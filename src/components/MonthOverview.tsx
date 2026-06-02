@@ -52,8 +52,12 @@ export function MonthOverview({
   return (
     <main className="mx-auto min-h-svh w-full max-w-md px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))]">
       <header className="sticky top-0 z-10 -mx-4 bg-cream/90 px-4 pb-4 pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))] backdrop-blur">
-        <p className="text-sm font-semibold text-muted">Monthly Challenge</p>
-        <h1 className="mt-1 text-4xl font-semibold tracking-[-0.075em] text-ink">Monate</h1>
+        <h1 className="text-[2.7rem] font-semibold leading-none tracking-[-0.08em] text-ink">
+          Dotted Days
+        </h1>
+        <p className="mt-2 text-sm font-semibold uppercase tracking-[0.2em] text-muted">
+          Übersicht
+        </p>
         <p className="mt-2 max-w-64 text-sm leading-5 text-muted">
           Plane die nächsten {DEFAULT_MONTHS_FORWARD} Monate und behalte deinen aktuellen Fokus
           im Blick.

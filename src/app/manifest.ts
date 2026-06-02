@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Monthly Challenge",
-    short_name: "Challenge",
+    name: "Dotted Days",
+    short_name: "Dotted Days",
     description: "Track one calm monthly challenge.",
     start_url: "/",
     display: "standalone",

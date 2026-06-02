@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Monthly Challenge",
+  title: "Dotted Days",
   description: "A calm monthly focus tracker for one personal challenge.",
   icons: {
     icon: "/icons/icon.svg",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Challenge",
+    title: "Dotted Days",
     statusBarStyle: "default",
   },
 };

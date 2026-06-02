@@ -1,4 +1,4 @@
-# Monthly Challenge
+# Dotted Days
 
 A calm mobile-first web app for tracking one personal monthly challenge.
 
