@@ -19,6 +19,7 @@ export function SharedChallengeDetail({
   onBack,
 }: SharedChallengeDetailProps) {
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
+  const [removeMessage, setRemoveMessage] = useState<string | null>(null);
   const {
     challenge,
     daysInMonth,
@@ -37,6 +38,7 @@ export function SharedChallengeDetail({
 
     return `${window.location.origin}/join/${challenge.inviteCode}`;
   }, [challenge?.inviteCode]);
+  const isOwner = challenge?.currentUserRole === "owner";
 
   const handleCopyInvite = async () => {
     if (!inviteLink) {
@@ -62,6 +64,32 @@ export function SharedChallengeDetail({
     }
 
     await handleCopyInvite();
+  };
+
+  const handleRemoveChallenge = async () => {
+    if (!challenge) {
+      return;
+    }
+
+    const confirmMessage = isOwner
+      ? "Diese gemeinsame Challenge wirklich für alle löschen?"
+      : "Diese gemeinsame Challenge wirklich verlassen?";
+
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      if (isOwner) {
+        await repository.deleteSharedChallenge(challenge.id);
+      } else {
+        await repository.leaveSharedChallenge(challenge.id);
+      }
+
+      onBack();
+    } catch {
+      setRemoveMessage("Die Challenge konnte nicht entfernt werden.");
+    }
   };
 
   if (isLoading || !challenge) {
@@ -159,6 +187,27 @@ export function SharedChallengeDetail({
           progressRatio={progressRatio}
           onToggleDay={toggleDay}
         />
+
+        <section className="rounded-[1.65rem] border border-line/70 bg-paper/55 p-4 backdrop-blur">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-ink">Challenge entfernen</p>
+              <p className="mt-0.5 text-xs text-muted">
+                {isOwner
+                  ? "Löscht sie für alle Teilnehmer"
+                  : "Du trittst aus dieser Challenge aus"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleRemoveChallenge}
+              className="min-h-10 rounded-full bg-missed px-4 text-sm font-semibold text-white transition active:scale-95"
+            >
+              Entfernen
+            </button>
+          </div>
+          {removeMessage ? <p className="mt-2 text-sm text-muted">{removeMessage}</p> : null}
+        </section>
       </div>
     </main>
   );

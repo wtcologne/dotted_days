@@ -29,6 +29,7 @@ export type SharedChallengeSummary = {
 
 export type SharedChallengeDetail = SharedChallengeSummary & {
   members: SharedChallengeMember[];
+  currentUserRole: "owner" | "member";
 };
 
 export type SharedChallengeRepository = {
@@ -37,6 +38,8 @@ export type SharedChallengeRepository = {
   createSharedChallenge(month: string, title: string): Promise<SharedChallengeDetail>;
   joinSharedChallenge(inviteCode: string): Promise<SharedChallengeDetail>;
   saveSharedChallengeCheckIns(challengeId: string, month: string, doneDays: number[]): Promise<void>;
+  leaveSharedChallenge(challengeId: string): Promise<void>;
+  deleteSharedChallenge(challengeId: string): Promise<void>;
 };
 
 export type ChallengeRepository = {

@@ -170,6 +170,7 @@ export class SupabaseChallengeRepository implements ChallengeRepository, SharedC
     return {
       ...mapSharedChallenge(row, row.check_ins ?? [], memberCounts, this.userId),
       members,
+      currentUserRole: members.find((member) => member.userId === this.userId)?.role ?? "member",
     };
   }
 
@@ -206,6 +207,7 @@ export class SupabaseChallengeRepository implements ChallengeRepository, SharedC
     return {
       ...mapSharedChallenge(row, [], new Map([[row.id, 1]]), this.userId),
       members: [{ userId: this.userId, role: "owner" }],
+      currentUserRole: "owner",
     };
   }
 
@@ -253,6 +255,41 @@ export class SupabaseChallengeRepository implements ChallengeRepository, SharedC
 
     if (insertError) {
       throw insertError;
+    }
+  }
+
+  async leaveSharedChallenge(challengeId: string): Promise<void> {
+    const { error: checkInError } = await this.supabase
+      .from("check_ins")
+      .delete()
+      .eq("challenge_id", challengeId)
+      .eq("user_id", this.userId);
+
+    if (checkInError) {
+      throw checkInError;
+    }
+
+    const { error: memberError } = await this.supabase
+      .from("challenge_members")
+      .delete()
+      .eq("challenge_id", challengeId)
+      .eq("user_id", this.userId);
+
+    if (memberError) {
+      throw memberError;
+    }
+  }
+
+  async deleteSharedChallenge(challengeId: string): Promise<void> {
+    const { error } = await this.supabase
+      .from("challenges")
+      .delete()
+      .eq("id", challengeId)
+      .eq("kind", "shared")
+      .eq("created_by", this.userId);
+
+    if (error) {
+      throw error;
     }
   }
 
