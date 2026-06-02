@@ -50,8 +50,8 @@ export function MonthOverview({
   }
 
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-md px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
-      <header className="sticky top-0 z-10 -mx-4 bg-cream/85 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] backdrop-blur">
+    <main className="mx-auto min-h-svh w-full max-w-md px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))]">
+      <header className="sticky top-0 z-10 -mx-4 bg-cream/90 px-4 pb-4 pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))] backdrop-blur">
         <p className="text-sm font-semibold text-muted">Monthly Challenge</p>
         <h1 className="mt-1 text-4xl font-semibold tracking-[-0.075em] text-ink">Monate</h1>
         <p className="mt-2 max-w-64 text-sm leading-5 text-muted">

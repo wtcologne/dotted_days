@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import type { PointerEvent } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ChallengeSuggestions } from "@/components/ChallengeSuggestions";
 import { ChallengeTitle } from "@/components/ChallengeTitle";
 import { MonthOverview } from "@/components/MonthOverview";
@@ -69,6 +70,7 @@ type ChallengeDetailProps = {
 };
 
 function ChallengeDetail({ month, repository, onBack }: ChallengeDetailProps) {
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const {
     challenge,
     daysInMonth,
@@ -93,6 +95,38 @@ function ChallengeDetail({ month, repository, onBack }: ChallengeDetailProps) {
     }
   };
 
+  const handlePointerDown = (event: PointerEvent<HTMLElement>) => {
+    if (event.pointerType !== "touch" || event.clientX > 44) {
+      swipeStartRef.current = null;
+      return;
+    }
+
+    swipeStartRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+    };
+  };
+
+  const handlePointerUp = (event: PointerEvent<HTMLElement>) => {
+    const start = swipeStartRef.current;
+    swipeStartRef.current = null;
+
+    if (!start) {
+      return;
+    }
+
+    const deltaX = event.clientX - start.x;
+    const deltaY = Math.abs(event.clientY - start.y);
+
+    if (deltaX > 86 && deltaY < 64) {
+      onBack();
+    }
+  };
+
+  const handlePointerCancel = () => {
+    swipeStartRef.current = null;
+  };
+
   const isCurrentMonth = status === "current";
   const isFutureMonth = status === "future";
 
@@ -104,9 +138,14 @@ function ChallengeDetail({ month, repository, onBack }: ChallengeDetailProps) {
   const showChallengeComposer = isFutureMonth || !hasTitle;
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))]">
-      <div className="flex flex-1 flex-col justify-center gap-5">
-        <header className="flex items-center justify-between">
+    <main
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      className="mx-auto flex min-h-svh w-full max-w-md touch-pan-y flex-col px-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] pt-[max(1.5rem,calc(env(safe-area-inset-top)+1rem))]"
+    >
+      <div className="flex flex-1 flex-col gap-5">
+        <header className="flex items-center justify-between pt-1">
           <button
             type="button"
             onClick={onBack}
