@@ -93,10 +93,10 @@ function getDayClassName(isDone: boolean, isToday: boolean, isDisabled: boolean)
   const base =
     "aspect-square min-h-10 rounded-2xl text-sm font-semibold transition duration-200 active:scale-95 disabled:active:scale-100";
   const state = isDisabled
-    ? "cursor-not-allowed bg-[#F6F0E8] text-muted/35"
+    ? "cursor-not-allowed bg-input text-muted/35"
     : isDone
     ? "bg-sage text-white shadow-[0_8px_18px_rgba(94,141,106,0.22)]"
-    : "bg-[#F2EBE1] text-ink/70 hover:bg-[#ECE2D7]";
+      : "bg-chip text-ink/70 hover:bg-sageSoft";
   const today = isToday ? "ring-2 ring-sageDeep/45 ring-offset-2 ring-offset-paper" : "";
 
   return [base, state, today].filter(Boolean).join(" ");

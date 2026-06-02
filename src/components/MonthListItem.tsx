@@ -102,10 +102,10 @@ function getStatusClassName(status: ChallengeOverviewItem["status"]): string {
   }
 
   if (status === "future") {
-    return "bg-[#F4EDE4] text-ink/60";
+    return "bg-chip text-ink/60";
   }
 
-  return "bg-[#EEE4D8] text-muted";
+  return "bg-future text-muted";
 }
 
 function getDayMarkerClassName(
@@ -121,8 +121,8 @@ function getDayMarkerClassName(
   }
 
   if (status === "past" || (status === "current" && today !== null && day < today)) {
-    return `${base} bg-[#D98B7E]`;
+    return `${base} bg-missed`;
   }
 
-  return `${base} bg-[#E7DDD2]`;
+  return `${base} bg-future`;
 }

@@ -15,12 +15,14 @@ import type { ChallengeRepository } from "@/lib/challenge/types";
 import { useChallengeOverview } from "@/lib/challenge/use-challenge-overview";
 import { useChallengeMonth } from "@/lib/challenge/use-current-challenge";
 import { useSupabaseAuth } from "@/lib/supabase/use-supabase-auth";
+import { useTheme } from "@/lib/theme/use-theme";
 
 export function AppShell() {
   const [view, setView] = useState<"overview" | "detail">("overview");
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonthKey);
   const [scrollTargetMonth, setScrollTargetMonth] = useState<string | null>(null);
   const auth = useSupabaseAuth();
+  const theme = useTheme();
   const repository = useMemo<ChallengeRepository>(() => {
     if (auth.supabase && auth.user) {
       return new SupabaseChallengeRepository(auth.supabase, auth.user.id);
@@ -49,6 +51,7 @@ export function AppShell() {
         isLoading={overview.isLoading}
         scrollTargetMonth={scrollTargetMonth}
         auth={auth}
+        theme={theme}
         onSelectMonth={handleSelectMonth}
       />
     );

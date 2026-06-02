@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { DEFAULT_MONTHS_FORWARD } from "@/lib/challenge/date";
 import type { ChallengeOverviewItem } from "@/lib/challenge/use-challenge-overview";
 import type { SupabaseAuthState } from "@/lib/supabase/use-supabase-auth";
+import type { ThemeState } from "@/lib/theme/use-theme";
 import { AccountMenu } from "./AccountMenu";
 import { MonthListItem } from "./MonthListItem";
 
@@ -12,6 +13,7 @@ type MonthOverviewProps = {
   isLoading: boolean;
   scrollTargetMonth: string | null;
   auth: SupabaseAuthState;
+  theme: ThemeState;
   onSelectMonth(month: string): void;
 };
 
@@ -20,6 +22,7 @@ export function MonthOverview({
   isLoading,
   scrollTargetMonth,
   auth,
+  theme,
   onSelectMonth,
 }: MonthOverviewProps) {
   const scrollTargetRef = useRef<HTMLDivElement | null>(null);
@@ -65,7 +68,7 @@ export function MonthOverview({
       </header>
 
       <div className="mb-3">
-        <AccountMenu auth={auth} />
+        <AccountMenu auth={auth} theme={theme} />
       </div>
 
       <section className="space-y-3 pb-4" aria-label="Monatsliste">

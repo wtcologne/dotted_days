@@ -3,9 +3,74 @@
 @tailwind utilities;
 
 :root {
-  color: #1f1d1a;
-  background: #f7f0e8;
+  --color-cream: 247 240 232;
+  --color-paper: 255 251 245;
+  --color-ink: 31 29 26;
+  --color-muted: 143 132 120;
+  --color-line: 231 221 210;
+  --color-sage: 143 188 154;
+  --color-sage-deep: 94 141 106;
+  --color-sage-soft: 228 240 229;
+  --color-missed: 217 139 126;
+  --color-future: 231 221 210;
+  --color-input: 255 249 241;
+  --color-chip: 244 237 228;
+  --color-bg-start: 251 246 239;
+  --color-bg-end: 243 234 223;
+  color: rgb(var(--color-ink));
+  background: rgb(var(--color-cream));
   color-scheme: light;
+}
+
+:root[data-theme="ocean"] {
+  --color-cream: 235 245 248;
+  --color-paper: 250 253 255;
+  --color-ink: 24 39 52;
+  --color-muted: 101 123 139;
+  --color-line: 207 226 234;
+  --color-sage: 82 180 158;
+  --color-sage-deep: 54 112 184;
+  --color-sage-soft: 219 238 246;
+  --color-missed: 224 128 116;
+  --color-future: 214 228 236;
+  --color-input: 244 251 253;
+  --color-chip: 226 241 247;
+  --color-bg-start: 241 249 251;
+  --color-bg-end: 223 239 246;
+}
+
+:root[data-theme="bloom"] {
+  --color-cream: 249 239 246;
+  --color-paper: 255 250 253;
+  --color-ink: 47 32 45;
+  --color-muted: 142 109 133;
+  --color-line: 234 213 227;
+  --color-sage: 111 184 137;
+  --color-sage-deep: 172 82 132;
+  --color-sage-soft: 246 222 237;
+  --color-missed: 221 119 112;
+  --color-future: 235 220 230;
+  --color-input: 255 246 252;
+  --color-chip: 247 227 240;
+  --color-bg-start: 253 245 250;
+  --color-bg-end: 244 226 238;
+}
+
+:root[data-theme="sunset"] {
+  --color-cream: 250 239 226;
+  --color-paper: 255 250 244;
+  --color-ink: 50 35 29;
+  --color-muted: 143 111 93;
+  --color-line: 236 214 195;
+  --color-sage: 119 179 130;
+  --color-sage-deep: 207 111 74;
+  --color-sage-soft: 250 229 213;
+  --color-missed: 198 92 84;
+  --color-future: 237 221 205;
+  --color-input: 255 246 237;
+  --color-chip: 249 231 216;
+  --color-bg-start: 255 247 237;
+  --color-bg-end: 245 221 201;
 }
 
 * {
@@ -14,7 +79,7 @@
 
 html {
   min-height: 100%;
-  background: #f7f0e8;
+  background: rgb(var(--color-cream));
   overflow-x: hidden;
 }
 
@@ -22,8 +87,8 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.86), transparent 34rem),
-    linear-gradient(180deg, #fbf6ef 0%, #f3eadf 100%);
+    radial-gradient(circle at top left, rgb(var(--color-paper) / 0.86), transparent 34rem),
+    linear-gradient(180deg, rgb(var(--color-bg-start)) 0%, rgb(var(--color-bg-end)) 100%);
   font-family:
     -apple-system,
     BlinkMacSystemFont,

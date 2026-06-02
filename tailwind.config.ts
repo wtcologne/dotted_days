@@ -5,14 +5,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        cream: "#F7F0E8",
-        paper: "#FFFBF5",
-        ink: "#1F1D1A",
-        muted: "#8F8478",
-        line: "#E7DDD2",
-        sage: "#8FBC9A",
-        sageDeep: "#5E8D6A",
-        sageSoft: "#E4F0E5",
+        cream: "rgb(var(--color-cream) / <alpha-value>)",
+        paper: "rgb(var(--color-paper) / <alpha-value>)",
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        muted: "rgb(var(--color-muted) / <alpha-value>)",
+        line: "rgb(var(--color-line) / <alpha-value>)",
+        sage: "rgb(var(--color-sage) / <alpha-value>)",
+        sageDeep: "rgb(var(--color-sage-deep) / <alpha-value>)",
+        sageSoft: "rgb(var(--color-sage-soft) / <alpha-value>)",
+        missed: "rgb(var(--color-missed) / <alpha-value>)",
+        future: "rgb(var(--color-future) / <alpha-value>)",
+        input: "rgb(var(--color-input) / <alpha-value>)",
+        chip: "rgb(var(--color-chip) / <alpha-value>)",
       },
       boxShadow: {
         soft: "0 24px 70px rgba(72, 55, 40, 0.10)",

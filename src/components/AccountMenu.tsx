@@ -3,12 +3,15 @@
 import type { ChangeEvent, FormEvent } from "react";
 import { useState } from "react";
 import type { SupabaseAuthState } from "@/lib/supabase/use-supabase-auth";
+import { themeOptions, type ThemeOption } from "@/lib/theme/themes";
+import type { ThemeState } from "@/lib/theme/use-theme";
 
 type AccountMenuProps = {
   auth: SupabaseAuthState;
+  theme: ThemeState;
 };
 
-export function AccountMenu({ auth }: AccountMenuProps) {
+export function AccountMenu({ auth, theme }: AccountMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
 
@@ -44,7 +47,7 @@ export function AccountMenu({ auth }: AccountMenuProps) {
       </button>
 
       {isOpen ? (
-        <div className="mt-3 border-t border-line/60 pt-3">
+        <div className="mt-3 space-y-4 border-t border-line/60 pt-3">
           {!auth.isConfigured ? (
             <p className="text-sm leading-5 text-muted">
               Supabase ist noch nicht konfiguriert. Deine Daten bleiben lokal auf diesem Gerät.
@@ -70,7 +73,7 @@ export function AccountMenu({ auth }: AccountMenuProps) {
                   value={email}
                   onChange={handleEmailChange}
                   placeholder="deine@email.de"
-                  className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-[#FFF9F1] px-4 text-sm font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
+                  className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-sm font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
                 />
               </label>
               <button
@@ -83,10 +86,71 @@ export function AccountMenu({ auth }: AccountMenuProps) {
             </form>
           )}
 
-          {auth.message ? <p className="mt-3 text-sm leading-5 text-muted">{auth.message}</p> : null}
+          {auth.message ? <p className="text-sm leading-5 text-muted">{auth.message}</p> : null}
+
+          <ThemePicker theme={theme} />
         </div>
       ) : null}
     </section>
+  );
+}
+
+type ThemePickerProps = {
+  theme: ThemeState;
+};
+
+function ThemePicker({ theme }: ThemePickerProps) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Theme</p>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        {themeOptions.map((option) => (
+          <ThemeButton
+            key={option.id}
+            option={option}
+            isActive={option.id === theme.themeId}
+            onSelectTheme={theme.setTheme}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+type ThemeButtonProps = {
+  option: ThemeOption;
+  isActive: boolean;
+  onSelectTheme(themeId: ThemeOption["id"]): void;
+};
+
+function ThemeButton({ option, isActive, onSelectTheme }: ThemeButtonProps) {
+  const handleClick = () => {
+    onSelectTheme(option.id);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      aria-pressed={isActive}
+      className={[
+        "min-h-12 rounded-[1.15rem] border px-3 text-left transition active:scale-[0.98]",
+        isActive ? "border-sageDeep bg-sageSoft" : "border-line/70 bg-paper/70",
+      ].join(" ")}
+    >
+      <span className="flex items-center justify-between gap-2">
+        <span className="text-sm font-semibold text-ink">{option.name}</span>
+        <span className="flex -space-x-1">
+          {option.colors.map((color) => (
+            <span
+              key={color}
+              className="h-4 w-4 rounded-full border border-white/80 shadow-[0_1px_3px_rgba(31,29,26,0.14)]"
+              style={{ backgroundColor: color }}
+            />
+          ))}
+        </span>
+      </span>
+    </button>
   );
 }
 

@@ -89,7 +89,7 @@ export function ChallengeSuggestions({
             onChange={handleInputChange}
             maxLength={120}
             placeholder="Was möchtest du machen?"
-            className="min-h-13 w-full rounded-[1.25rem] border border-line/70 bg-[#FFF9F1] px-4 text-base font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
+            className="min-h-13 w-full rounded-[1.25rem] border border-line/70 bg-input px-4 text-base font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
           />
         </label>
         <button
@@ -128,7 +128,7 @@ function SuggestionChip({ suggestion, onSelectSuggestion }: SuggestionChipProps)
     <button
       type="button"
       onClick={handleClick}
-      className="min-h-10 rounded-full border border-line/70 bg-[#F4EDE4] px-3 text-sm font-medium text-ink/75 transition hover:bg-sageSoft active:scale-95"
+      className="min-h-10 rounded-full border border-line/70 bg-chip px-3 text-sm font-medium text-ink/75 transition hover:bg-sageSoft active:scale-95"
     >
       {suggestion}
     </button>
