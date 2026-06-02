@@ -23,7 +23,10 @@ export function SharedChallengesSection({
     repository,
   );
   const [isCreating, setIsCreating] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const [title, setTitle] = useState("");
+  const visibleSharedChallenges = showAll ? sharedChallenges : sharedChallenges.slice(0, 3);
+  const hasHiddenSharedChallenges = sharedChallenges.length > 3;
 
   const handleToggleCreate = () => {
     setIsCreating((current) => !current);
@@ -31,6 +34,10 @@ export function SharedChallengesSection({
 
   const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+  };
+
+  const handleToggleShowAll = () => {
+    setShowAll((current) => !current);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -83,7 +90,7 @@ export function SharedChallengesSection({
               onChange={handleTitleChange}
               maxLength={120}
               placeholder="Gemeinsame Challenge"
-              className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-sm font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
+              className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-base font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
             />
           </label>
           <button
@@ -98,13 +105,23 @@ export function SharedChallengesSection({
 
       {repository && !isLoading && sharedChallenges.length > 0 ? (
         <div className="mt-3 space-y-2">
-          {sharedChallenges.slice(0, 3).map((challenge) => (
+          {visibleSharedChallenges.map((challenge) => (
             <SharedChallengeCard
               key={challenge.id}
               challenge={challenge}
               onSelectChallenge={onSelectChallenge}
             />
           ))}
+
+          {hasHiddenSharedChallenges ? (
+            <button
+              type="button"
+              onClick={handleToggleShowAll}
+              className="min-h-11 w-full rounded-[1.15rem] border border-line/70 bg-paper/60 px-4 text-sm font-semibold text-muted transition active:scale-[0.99]"
+            >
+              {showAll ? "Weniger anzeigen" : `Alle anzeigen (${sharedChallenges.length})`}
+            </button>
+          ) : null}
         </div>
       ) : null}
     </section>

@@ -73,7 +73,7 @@ export function AccountMenu({ auth, theme }: AccountMenuProps) {
                   value={email}
                   onChange={handleEmailChange}
                   placeholder="deine@email.de"
-                  className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-sm font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
+                  className="min-h-12 w-full rounded-[1.15rem] border border-line/70 bg-input px-4 text-base font-semibold text-ink outline-none placeholder:text-muted/50 focus:border-sageDeep/40 focus:ring-2 focus:ring-sageDeep/10"
                 />
               </label>
               <button
